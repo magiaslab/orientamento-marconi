@@ -1,0 +1,128 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import Hero from "../components/Hero.astro";
+import Section from "../components/Section.astro";
+import Card from "../components/Card.astro";
+import { getCollection } from "astro:content";
+
+const plessi = await getCollection("plessi");
+const progetti = await getCollection("progetti");
+const opendays = await getCollection("opendays");
+
+// Sort plessi by order
+const sortedPlessi = plessi
+	.sort((a, b) => a.data.order - b.data.order)
+	.slice(0, 3);
+const recentProjects = progetti.slice(0, 3);
+const nextOpenDay = opendays.find((d) => d.data.active);
+---
+
+<Layout title="Orientamento - I.C. G. Marconi">
+	<Header />
+
+	<main>
+		<Hero />
+
+		<Section
+			title="Le Nostre Scuole"
+			subtitle="Un percorso educativo completo, dall'infanzia alla secondaria di primo grado."
+		>
+			<div class="grid md:grid-cols-3 gap-8">
+				{
+					sortedPlessi.map((plesso) => (
+						<Card
+							title={plesso.data.name}
+							description={plesso.data.description}
+							image={plesso.data.coverImage}
+							href={`/plessi/${plesso.slug}`}
+							tag={
+								plesso.data.type.charAt(0).toUpperCase() +
+								plesso.data.type.slice(1)
+							}
+						/>
+					))
+				}
+			</div>
+			<div class="text-center mt-12">
+				<a
+					href="/plessi"
+					class="text-indigo-600 font-semibold hover:text-indigo-700 inline-flex items-center gap-2"
+				>
+					Vedi tutti i plessi
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="h-4 w-4"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+					</svg>
+				</a>
+			</div>
+		</Section>
+
+		<Section
+			background="gray"
+			title="Progetti in Evidenza"
+			subtitle="Attività laboratoriali, uscite didattiche e iniziative speciali che arricchiscono l'offerta formativa."
+		>
+			<div class="grid md:grid-cols-3 gap-8">
+				{
+					recentProjects.map((project) => (
+						<Card
+							title={project.data.title}
+							description={project.data.description}
+							image={project.data.coverImage}
+							href={`/progetti`}
+							tag="Progetto"
+						/>
+					))
+				}
+			</div>
+		</Section>
+
+		{
+			nextOpenDay && (
+				<Section
+					title="Partecipa all'Open Day"
+					subtitle="Vieni a conoscere la nostra scuola, i docenti e le attività che proponiamo."
+				>
+					<div class="bg-indigo-600 rounded-2xl p-8 md:p-12 text-white text-center max-w-4xl mx-auto relative overflow-hidden">
+						<div class="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
+						<div class="relative z-10">
+							<h3 class="text-3xl font-bold mb-4">
+								Prossimo Appuntamento:{" "}
+								{nextOpenDay.data.date.toLocaleDateString(
+									"it-IT",
+									{ day: "numeric", month: "long" },
+								)}
+							</h3>
+							<p class="text-indigo-100 text-lg mb-8">
+								Dalle {nextOpenDay.data.time} presso{" "}
+								{nextOpenDay.data.location}.
+								<br />
+								Laboratori attivi:{" "}
+								{nextOpenDay.data.labs?.join(", ")}.
+							</p>
+							<a
+								href="/open-day"
+								class="inline-block bg-white text-indigo-600 px-8 py-3 rounded-xl font-bold hover:bg-indigo-50 transition-colors shadow-lg"
+							>
+								Prenota il tuo posto
+							</a>
+						</div>
+					</div>
+				</Section>
+			)
+		}
+	</main>
+
+	<Footer />
+</Layout>

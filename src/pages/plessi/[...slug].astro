@@ -1,0 +1,106 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import Section from "../../components/Section.astro";
+import Card from "../../components/Card.astro";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+    const plessi = await getCollection("plessi");
+    return plessi.map((plesso) => ({
+        params: { slug: plesso.slug },
+        props: { plesso },
+    }));
+}
+
+const { plesso } = Astro.props;
+const { Content } = await plesso.render();
+
+const progetti = await getCollection("progetti");
+// Filter projects that reference this plesso (by slug or name, assuming 'plesso' field in project matches slug or name)
+// In my sample data I used 'marconi' which is a slug.
+const relatedProjects = progetti.filter(
+    (p) =>
+        p.data.plesso.toLowerCase() === plesso.slug ||
+        p.data.plesso.toLowerCase() === plesso.data.name.toLowerCase(),
+);
+---
+
+<Layout title={`${plesso.data.name} - I.C. G. Marconi`}>
+    <Header />
+
+    <main>
+        <div class="relative h-[60vh] min-h-[400px]">
+            <img
+                src={plesso.data.coverImage}
+                alt={plesso.data.name}
+                class="w-full h-full object-cover"
+            />
+            <div
+                class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent"
+            >
+            </div>
+            <div class="absolute bottom-0 left-0 w-full p-8 md:p-16 text-white">
+                <div class="container mx-auto">
+                    <span
+                        class="inline-block py-1 px-3 rounded-full bg-indigo-600 text-white text-sm font-medium mb-4"
+                    >
+                        {plesso.data.type.toUpperCase()}
+                    </span>
+                    <h1 class="text-4xl md:text-6xl font-bold mb-4">
+                        {plesso.data.name}
+                    </h1>
+                    <p class="text-xl text-slate-200 flex items-center gap-2">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-5 w-5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                            ></path>
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        {plesso.data.address}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <Section>
+            <div class="prose prose-lg prose-indigo mx-auto">
+                <Content />
+            </div>
+        </Section>
+
+        {
+            relatedProjects.length > 0 && (
+                <Section background="gray" title="Progetti del Plesso">
+                    <div class="grid md:grid-cols-3 gap-8">
+                        {relatedProjects.map((project) => (
+                            <Card
+                                title={project.data.title}
+                                description={project.data.description}
+                                image={project.data.coverImage}
+                                href={`/progetti`}
+                                tag="Progetto"
+                            />
+                        ))}
+                    </div>
+                </Section>
+            )
+        }
+    </main>
+
+    <Footer />
+</Layout>

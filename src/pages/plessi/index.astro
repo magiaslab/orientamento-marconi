@@ -1,0 +1,61 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import Section from "../../components/Section.astro";
+import Card from "../../components/Card.astro";
+import { getCollection } from "astro:content";
+
+const plessi = await getCollection("plessi");
+const sortedPlessi = plessi.sort((a, b) => a.data.order - b.data.order);
+
+const types = ["infanzia", "primaria", "secondaria"];
+const typeLabels: Record<string, string> = {
+    infanzia: "Scuola dell'Infanzia",
+    primaria: "Scuola Primaria",
+    secondaria: "Scuola Secondaria di I Grado",
+};
+---
+
+<Layout title="Le Nostre Scuole - I.C. G. Marconi">
+    <Header />
+
+    <main>
+        <div class="bg-indigo-900 text-white py-20 text-center">
+            <h1 class="text-4xl font-bold mb-4">Le Nostre Scuole</h1>
+            <p class="text-indigo-200 max-w-2xl mx-auto px-4">
+                Tre ordini di scuola, un unico progetto educativo. Scopri i
+                nostri plessi e le loro specificità.
+            </p>
+        </div>
+
+        {
+            types.map((type) => {
+                const schools = sortedPlessi.filter(
+                    (p) => p.data.type === type,
+                );
+                if (schools.length === 0) return null;
+
+                return (
+                    <Section
+                        title={typeLabels[type]}
+                        background={type === "primaria" ? "gray" : "white"}
+                    >
+                        <div class="grid md:grid-cols-3 gap-8">
+                            {schools.map((plesso) => (
+                                <Card
+                                    title={plesso.data.name}
+                                    description={plesso.data.description}
+                                    image={plesso.data.coverImage}
+                                    href={`/plessi/${plesso.slug}`}
+                                />
+                            ))}
+                        </div>
+                    </Section>
+                );
+            })
+        }
+    </main>
+
+    <Footer />
+</Layout>

@@ -1,0 +1,60 @@
+---
+import { Mail, Phone, MapPin } from "lucide-react";
+---
+
+<footer class="bg-slate-900 text-slate-300 py-12">
+    <div class="container mx-auto px-4 grid md:grid-cols-3 gap-8">
+        <div>
+            <h3 class="text-white font-bold text-lg mb-4">I.C. G. Marconi</h3>
+            <p class="text-sm leading-relaxed">
+                Un istituto comprensivo che guarda al futuro, mettendo al centro
+                la crescita di ogni studente.
+            </p>
+        </div>
+
+        <div>
+            <h3 class="text-white font-bold text-lg mb-4">Contatti</h3>
+            <ul class="space-y-3 text-sm">
+                <li class="flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-indigo-400" />
+                    <span>Via della Scuola 1, Città</span>
+                </li>
+                <li class="flex items-center gap-2">
+                    <Phone className="w-4 h-4 text-indigo-400" />
+                    <span>0123 456789</span>
+                </li>
+                <li class="flex items-center gap-2">
+                    <Mail className="w-4 h-4 text-indigo-400" />
+                    <span>segreteria@istituto-marconi.edu.it</span>
+                </li>
+            </ul>
+        </div>
+
+        <div>
+            <h3 class="text-white font-bold text-lg mb-4">Link Utili</h3>
+            <ul class="space-y-2 text-sm">
+                <li>
+                    <a
+                        href="https://www.istituto-marconi.edu.it"
+                        class="hover:text-white transition-colors"
+                        >Sito Istituzionale</a>
+                </li>
+                <li>
+                    <a
+                        href="/privacy"
+                        class="hover:text-white transition-colors"
+                        >Privacy Policy</a>
+                </li>
+                <li>
+                    <a href="/admin" class="hover:text-white transition-colors"
+                        >Area Riservata</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div
+        class="border-t border-slate-800 mt-12 pt-8 text-center text-xs text-slate-500"
+    >
+        &copy; {new Date().getFullYear()} I.C. G. Marconi. Tutti i diritti riservati.
+    </div>
+</footer>

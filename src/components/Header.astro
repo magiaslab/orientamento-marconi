@@ -1,0 +1,36 @@
+---
+import { Menu } from "lucide-react";
+---
+
+<header class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="container mx-auto px-4 h-16 flex items-center justify-between">
+        <a
+            href="/"
+            class="flex items-center gap-2 font-bold text-xl text-indigo-600"
+        >
+            <span>I.C. G. Marconi</span>
+            <span class="text-slate-500 font-normal hidden sm:inline"
+                >| Orientamento</span
+            >
+        </a>
+
+        <nav class="hidden md:flex gap-8 text-sm font-medium text-slate-600">
+            <a href="/" class="hover:text-indigo-600 transition-colors">Home</a>
+            <a href="/plessi" class="hover:text-indigo-600 transition-colors"
+                >Le Nostre Scuole</a
+            >
+            <a href="/progetti" class="hover:text-indigo-600 transition-colors"
+                >Progetti</a
+            >
+            <a href="/open-day" class="hover:text-indigo-600 transition-colors"
+                >Open Day</a
+            >
+        </nav>
+
+        <button
+            class="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg"
+        >
+            <Menu className="w-6 h-6" />
+        </button>
+    </div>
+</header>

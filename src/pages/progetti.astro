@@ -1,0 +1,45 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import Section from "../components/Section.astro";
+import Card from "../components/Card.astro";
+import { getCollection } from "astro:content";
+
+const progetti = await getCollection("progetti");
+const sortedProgetti = progetti.sort(
+    (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+---
+
+<Layout title="Progetti - I.C. G. Marconi">
+    <Header />
+
+    <main>
+        <div class="bg-indigo-900 text-white py-20 text-center">
+            <h1 class="text-4xl font-bold mb-4">I Nostri Progetti</h1>
+            <p class="text-indigo-200 max-w-2xl mx-auto px-4">
+                Un'offerta formativa ricca e variegata per stimolare la
+                curiosità e l'apprendimento.
+            </p>
+        </div>
+
+        <Section>
+            <div class="grid md:grid-cols-3 gap-8">
+                {
+                    sortedProgetti.map((project) => (
+                        <Card
+                            title={project.data.title}
+                            description={project.data.description}
+                            image={project.data.coverImage}
+                            href={`#`}
+                            tag="Progetto"
+                        />
+                    ))
+                }
+            </div>
+        </Section>
+    </main>
+
+    <Footer />
+</Layout>
