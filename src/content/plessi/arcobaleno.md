@@ -3,7 +3,7 @@ name: "Scuola dell'Infanzia Arcobaleno"
 type: "infanzia"
 description: "Un ambiente colorato e accogliente dove i bambini iniziano il loro percorso di scoperta."
 address: "Via dei Colori 1, Città"
-coverImage: "https://images.unsplash.com/photo-1587654780291-39c940483713?auto=format&fit=crop&q=80&w=1000"
+coverImage: "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&q=80&w=1000"
 order: 1
 ---
 
