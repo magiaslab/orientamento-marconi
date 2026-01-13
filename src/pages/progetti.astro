@@ -3,41 +3,64 @@ import Layout from "../layouts/Layout.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import Section from "../components/Section.astro";
-import Card from "../components/Card.astro";
+import CardOpenDay from "../components/CardOpenDay.astro";
 import { getCollection } from "astro:content";
 
-const progetti = await getCollection("progetti");
-const sortedProgetti = progetti.sort(
-    (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
-);
+const opendays = await getCollection("opendays");
+const plessi = await getCollection("plessi");
+
+// Ordina tutti gli open day per data (più recenti prima)
+const allOpenDays = opendays.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+// Funzione per trovare il plesso collegato
+function getPlesso(plessoSlug: string | undefined) {
+    if (!plessoSlug) return null;
+    return plessi.find((p) => p.slug === plessoSlug);
+}
 ---
 
-<Layout title="Progetti - I.C. G. Marconi">
+<Layout title="Open Day - I.C. G. Marconi">
     <Header />
 
     <main>
         <div class="bg-indigo-900 text-white py-20 text-center">
-            <h1 class="text-4xl font-bold mb-4">I Nostri Progetti</h1>
+            <h1 class="text-4xl font-bold mb-4">Open Day</h1>
             <p class="text-indigo-200 max-w-2xl mx-auto px-4">
-                Un'offerta formativa ricca e variegata per stimolare la
-                curiosità e l'apprendimento.
+                Vieni a scoprire la nostra scuola. Prenota la tua visita per
+                conoscere l'offerta formativa e i nostri spazi.
             </p>
         </div>
 
         <Section>
-            <div class="grid md:grid-cols-3 gap-8">
-                {
-                    sortedProgetti.map((project) => (
-                        <Card
-                            title={project.data.title}
-                            description={project.data.description}
-                            image={project.data.coverImage}
-                            href={`#`}
-                            tag="Progetto"
-                        />
-                    ))
-                }
-            </div>
+            {allOpenDays.length > 0 ? (
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {
+                        allOpenDays.map((day) => {
+                            const plesso = getPlesso(day.data.plesso);
+                            const mainImage = day.data.images && day.data.images.length > 0 
+                                ? day.data.images[0] 
+                                : null;
+                            
+                            if (!mainImage) return null;
+                            
+                            return (
+                                <CardOpenDay
+                                    image={mainImage}
+                                    date={day.data.date}
+                                    location={day.data.location}
+                                    time={day.data.time}
+                                    plessoSlug={plesso?.slug}
+                                    plessoName={plesso?.data.name}
+                                />
+                            );
+                        })
+                    }
+                </div>
+            ) : (
+                <p class="text-slate-600 italic text-center py-12">
+                    Al momento non ci sono Open Day disponibili.
+                </p>
+            )}
         </Section>
     </main>
 

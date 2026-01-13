@@ -30,7 +30,9 @@ const opendays = defineCollection({
         date: z.date(),
         time: z.string(),
         location: z.string(),
+        plesso: z.string().optional(), // Slug del plesso collegato
         labs: z.array(z.string()).optional(),
+        images: z.array(z.string()).optional(), // Array di percorsi immagini
         active: z.boolean().default(true),
         bookingLink: z.string().optional(), // In case we use external forms
     })

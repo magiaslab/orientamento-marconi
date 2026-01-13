@@ -1,12 +1,12 @@
 ---
 name: "Scuola Secondaria G. Carducci"
 type: "secondaria"
-description: "Preparazione eccellente per le scuole superiori con indirizzo musicale."
-address: "Viale dei Poeti 10, Città"
+description: "Scuola Secondaria di Primo Grado, costituita da 15 classi e 305 alunni iscritti all'A.S. 2023-2024."
+address: "Venturina Terme"
 coverImage: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=1000"
-order: 8
+order: 9
 ---
 
-## La Scuola Carducci
+## Scuola Secondaria G. Carducci
 
-Offriamo corsi di strumento musicale e potenziamento linguistico.
+Scuola Secondaria di Primo Grado, costituita da 15 classi e 305 alunni iscritti all'A.S. 2023-2024.

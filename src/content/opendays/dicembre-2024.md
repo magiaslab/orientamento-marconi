@@ -1,5 +1,5 @@
 ---
-date: 2024-12-15
+date: 2025-01-21
 time: "10:00 - 13:00"
 location: "Tutti i plessi"
 labs: ["Laboratorio di Robotica (Marconi)", "Musica Insieme (Carducci)", "Pittura Creativa (Arcobaleno)"]

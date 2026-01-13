@@ -6,7 +6,15 @@ import Section from "../components/Section.astro";
 import { getCollection } from "astro:content";
 
 const opendays = await getCollection("opendays");
-const activeOpenDays = opendays.filter((d) => d.data.active);
+const plessi = await getCollection("plessi");
+const activeOpenDays = opendays.filter((d) => d.data.active).sort((a, b) => a.data.date.getTime() - b.data.date.getTime());
+const pastOpenDays = opendays.filter((d) => !d.data.active).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+// Funzione per trovare il plesso collegato
+function getPlesso(plessoSlug: string | undefined) {
+    if (!plessoSlug) return null;
+    return plessi.find((p) => p.slug === plessoSlug);
+}
 ---
 
 <Layout title="Open Day - I.C. G. Marconi">
@@ -29,43 +37,77 @@ const activeOpenDays = opendays.filter((d) => d.data.active);
                     </h2>
                     <div class="space-y-6">
                         {
-                            activeOpenDays.map((day) => (
-                                <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-                                    <div class="flex items-center gap-4 mb-4">
-                                        <div class="bg-indigo-100 text-indigo-700 font-bold px-4 py-2 rounded-lg text-center min-w-[80px]">
-                                            <span class="block text-2xl">
-                                                {day.data.date.getDate()}
-                                            </span>
-                                            <span class="text-xs uppercase">
-                                                {day.data.date.toLocaleString(
-                                                    "it-IT",
-                                                    { month: "short" },
+                            activeOpenDays.map((day) => {
+                                const plesso = getPlesso(day.data.plesso);
+                                return (
+                                    <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                                        <div class="flex items-center gap-4 mb-4">
+                                            <div class="bg-indigo-100 text-indigo-700 font-bold px-4 py-2 rounded-lg text-center min-w-[80px]">
+                                                <span class="block text-2xl">
+                                                    {day.data.date.getDate()}
+                                                </span>
+                                                <span class="text-xs uppercase">
+                                                    {day.data.date.toLocaleString(
+                                                        "it-IT",
+                                                        { month: "short" },
+                                                    )}
+                                                </span>
+                                            </div>
+                                            <div class="flex-1">
+                                                <h3 class="font-bold text-lg text-slate-900">
+                                                    {day.data.location}
+                                                </h3>
+                                                <p class="text-slate-600">
+                                                    {day.data.time}
+                                                </p>
+                                                {plesso && (
+                                                    <a
+                                                        href={`/plessi/${plesso.slug}`}
+                                                        class="text-indigo-600 hover:text-indigo-700 text-sm font-medium mt-1 inline-flex items-center gap-1"
+                                                    >
+                                                        Vedi plesso
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            class="h-3 w-3"
+                                                            fill="none"
+                                                            viewBox="0 0 24 24"
+                                                            stroke="currentColor"
+                                                        >
+                                                            <path
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M9 5l7 7-7 7"
+                                                            />
+                                                        </svg>
+                                                    </a>
                                                 )}
-                                            </span>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h3 class="font-bold text-lg text-slate-900">
-                                                {day.data.location}
-                                            </h3>
-                                            <p class="text-slate-600">
-                                                {day.data.time}
-                                            </p>
-                                        </div>
+                                        {day.data.images && day.data.images.length > 0 && (
+                                            <div class="mb-4">
+                                                <img
+                                                    src={day.data.images[0]}
+                                                    alt={day.data.location}
+                                                    class="w-full h-48 object-cover rounded-lg"
+                                                />
+                                            </div>
+                                        )}
+                                        {day.data.labs && (
+                                            <div class="mt-4 pt-4 border-t border-slate-100">
+                                                <p class="text-sm font-semibold text-slate-700 mb-2">
+                                                    Laboratori attivi:
+                                                </p>
+                                                <ul class="list-disc list-inside text-sm text-slate-600 space-y-1">
+                                                    {day.data.labs.map((lab) => (
+                                                        <li>{lab}</li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        )}
                                     </div>
-                                    {day.data.labs && (
-                                        <div class="mt-4 pt-4 border-t border-slate-100">
-                                            <p class="text-sm font-semibold text-slate-700 mb-2">
-                                                Laboratori attivi:
-                                            </p>
-                                            <ul class="list-disc list-inside text-sm text-slate-600 space-y-1">
-                                                {day.data.labs.map((lab) => (
-                                                    <li>{lab}</li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    )}
-                                </div>
-                            ))
+                                );
+                            })
                         }
                         {
                             activeOpenDays.length === 0 && (
@@ -157,14 +199,17 @@ const activeOpenDays = opendays.filter((d) => d.data.active);
                                 class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
                             >
                                 <option value="">Seleziona un plesso</option>
-                                <option value="infanzia"
-                                    >Scuola dell'Infanzia</option
-                                >
-                                <option value="primaria">Scuola Primaria</option
-                                >
-                                <option value="secondaria"
-                                    >Scuola Secondaria</option
-                                >
+                                {
+                                    plessi.sort((a, b) => {
+                                        const typeOrder = { infanzia: 1, primaria: 2, secondaria: 3 };
+                                        const typeDiff = typeOrder[a.data.type] - typeOrder[b.data.type];
+                                        return typeDiff !== 0 ? typeDiff : a.data.order - b.data.order;
+                                    }).map((plesso) => (
+                                        <option value={plesso.slug}>
+                                            {plesso.data.name}
+                                        </option>
+                                    ))
+                                }
                             </select>
                         </div>
 
@@ -196,6 +241,82 @@ const activeOpenDays = opendays.filter((d) => d.data.active);
                 </div>
             </div>
         </Section>
+
+        {pastOpenDays.length > 0 && (
+            <Section background="gray">
+                <h2 class="text-2xl font-bold text-slate-900 mb-6">
+                    Eventi Passati
+                </h2>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {
+                        pastOpenDays.map((day) => {
+                            const plesso = getPlesso(day.data.plesso);
+                            return (
+                                <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                                    {day.data.images && day.data.images.length > 0 && (
+                                        <img
+                                            src={day.data.images[0]}
+                                            alt={day.data.location}
+                                            class="w-full h-48 object-cover"
+                                        />
+                                    )}
+                                    <div class="p-6">
+                                        <div class="flex items-center gap-3 mb-3">
+                                            <div class="bg-slate-100 text-slate-700 font-bold px-3 py-1 rounded text-center text-sm">
+                                                <span class="block text-lg">
+                                                    {day.data.date.getDate()}
+                                                </span>
+                                                <span class="text-xs uppercase">
+                                                    {day.data.date.toLocaleString(
+                                                        "it-IT",
+                                                        { month: "short" },
+                                                    )}
+                                                </span>
+                                            </div>
+                                            <div class="flex-1">
+                                                <h3 class="font-bold text-slate-900">
+                                                    {day.data.location}
+                                                </h3>
+                                                <p class="text-slate-600 text-sm">
+                                                    {day.data.time}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        {plesso && (
+                                            <a
+                                                href={`/plessi/${plesso.slug}`}
+                                                class="text-indigo-600 hover:text-indigo-700 text-sm font-medium inline-flex items-center gap-1"
+                                            >
+                                                Vedi plesso
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    class="h-3 w-3"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M9 5l7 7-7 7"
+                                                    />
+                                                </svg>
+                                            </a>
+                                        )}
+                                        {day.data.images && day.data.images.length > 1 && (
+                                            <p class="text-xs text-slate-500 mt-2">
+                                                {day.data.images.length} foto disponibili
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })
+                    }
+                </div>
+            </Section>
+        )}
     </main>
 
     <Footer />
